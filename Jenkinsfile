@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Check out the code from your version control system
-                git 'https://github.com/triforceadi/minimal-courier-api'
+                git 'https://github.com/triforceadi/minimal-courier-api.git'
             }
         }
         
