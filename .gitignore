@@ -1,0 +1,34 @@
+# Dependency directories
+node_modules/
+
+# Environment variables file
+.env
+
+# Compiled output
+dist/
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor-specific files
+.vscode/
+.idea/
+
+# Coverage directory
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Build files
+build/
+
+
+# Ignore specific files
+config.js
