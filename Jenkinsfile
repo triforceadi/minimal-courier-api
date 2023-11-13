@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Check out the code from your version control system
-                git 'checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/triforceadi/minimal-courier-api.git']]])'
+                git 'https://github.com/triforceadi/minimal-courier-api.git'
             }
         }
         
