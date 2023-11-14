@@ -10,7 +10,6 @@ const port = 3000;
 
 app.use(bodyParser.json());
 
-// Swagger setup
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -20,15 +19,13 @@ const options = {
       description: 'A simple API for user management',
     },
   },
-  apis: ['./src/routes/*.js'], // Path to the API routes
+  apis: ['./src/routes/*.js'],
 };
 
 const specs = swaggerJsdoc(options);
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(specs));
 
-// User routes
 app.use('/couriers', courierRoutes);
-
 app.use('/barcodes', barcodeRoutes);
 
 app.listen(port, () => {
