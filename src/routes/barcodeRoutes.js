@@ -95,6 +95,28 @@
  *               valid: false
  *               error: Invalid barcode
  */
+/**
+ * @swagger
+ * /barcodes/addBarcode:
+ *   post:
+ *     summary: Add a new barcode
+ *     tags: [Barcodes]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               barcodeValue:
+ *                 type: string
+ *                 description: The value of the new barcode
+ *     responses:
+ *       201:
+ *         description: Barcode added successfully
+ *       400:
+ *         description: Barcode value is required
+ */
 
  const express = require('express');
  const router = express.Router();
@@ -103,5 +125,6 @@
  router.get('/', barcodeController.getAvailableBarcodes);
  router.post('/validate', barcodeController.validateBarcode);
  router.post('/deliver', barcodeController.deliverBarcode);
+ router.post('/addBarcode', barcodeController.addBarcode);
  
  module.exports = router;

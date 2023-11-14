@@ -1,38 +1,44 @@
+const fs = require('fs');
+const path = require('path');
 const Courier = require('../models/courierModel');
 
-class CourierService {
-  constructor() {
-    this.couriers = [
-      new Courier(1, 'John', 'Doe', 25, ['Driver License']),
-      new Courier(2, 'Jane', 'Smith', 30, ['Driver License', 'Courier Certification']),
-    ];
+const couriersFilePath = path.join(__dirname, '..', 'db', 'couriers.json');
+
+const getAllCouriers = () => {
+  const couriersData = fs.readFileSync(couriersFilePath, 'utf-8');
+  return JSON.parse(couriersData);
+};
+
+const getCourierById = (id) => {
+  const couriers = getAllCouriers();
+  return couriers.find((courier) => courier.id === id);
+};
+
+const addCourier = (firstName, lastName, age, licenses) => {
+  const couriers = getAllCouriers();
+  const id = couriers.length + 1;
+  const newCourier = new Courier(id, firstName, lastName, age, licenses);
+  couriers.push(newCourier);
+  fs.writeFileSync(couriersFilePath, JSON.stringify(couriers, null, 2), 'utf-8');
+  return newCourier;
+};
+
+const updateCourier = (id, firstName, lastName, age, licenses) => {
+  const couriers = getAllCouriers();
+  const index = couriers.findIndex((courier) => courier.id === id);
+
+  if (index !== -1) {
+    couriers[index] = new Courier(id, firstName, lastName, age, licenses);
+    fs.writeFileSync(couriersFilePath, JSON.stringify(couriers, null, 2), 'utf-8');
+    return couriers[index];
   }
 
-  getAllCouriers() {
-    return this.couriers;
-  }
+  return null;
+};
 
-  getCourierById(id) {
-    return this.couriers.find((courier) => courier.id === id);
-  }
-
-  addCourier(firstName, lastName, age, licenses) {
-    const id = this.couriers.length + 1;
-    const newCourier = new Courier(id, firstName, lastName, age, licenses);
-    this.couriers.push(newCourier);
-    return newCourier;
-  }
-
-  updateCourier(id, firstName, lastName, age, licenses) {
-    const index = this.couriers.findIndex((courier) => courier.id === id);
-
-    if (index !== -1) {
-      this.couriers[index] = new Courier(id, firstName, lastName, age, licenses);
-      return this.couriers[index];
-    }
-
-    return null;
-  }
-}
-
-module.exports = new CourierService();
+module.exports = {
+  getAllCouriers,
+  getCourierById,
+  addCourier,
+  updateCourier,
+};

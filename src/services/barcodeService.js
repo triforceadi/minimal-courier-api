@@ -1,45 +1,65 @@
+const fs = require('fs');
+const path = require('path');
 const Barcode = require('../models/barcodeModel');
 
+const barcodesFilePath = path.join(__dirname, '..', 'db', 'barcodes.json');
 
-class BarcodeService {
-  constructor() {
-    this.availableBarcodes = [
-      new Barcode('123456'),
-      new Barcode('789012'),
-    ];
-  }
+const getAvailableBarcodes = () => {
+  const barcodesData = fs.readFileSync(barcodesFilePath, 'utf-8');
+  return JSON.parse(barcodesData);
+};
 
-  getAvailableBarcodes() {
-    return this.availableBarcodes;
-  }
+const validateBarcode = (barcodeValue) => {
+  const barcodes = getAvailableBarcodes();
+  const barcode = barcodes.find((b) => b.value === barcodeValue);
 
-  validateBarcode(barcodeValue) {
-    const barcode = this.availableBarcodes.find((b) => b.value === barcodeValue);
-
-    if (barcode) {
+  if (barcode) {
+    if (!barcode.isValid) {
       barcode.isValid = true;
-      return { valid: true };
-    } else {
-      return { valid: false, error: 'Invalid barcode' };
+      fs.writeFileSync(barcodesFilePath, JSON.stringify(barcodes, null, 2), 'utf-8');
     }
+    return { valid: true };
+  } else {
+    return { valid: false, error: 'Invalid barcode' };
+  }
+};
+
+const addBarcode = (barcodeValue, isValid = true) => {
+  const newBarcode = new Barcode(barcodeValue);
+  newBarcode.isValid = isValid;
+  newBarcode.isDelivered = false;
+  
+  const barcodes = getAvailableBarcodes();
+  barcodes.push(newBarcode);
+
+  fs.writeFileSync(barcodesFilePath, JSON.stringify(barcodes, null, 2), 'utf-8');
+
+  return newBarcode;
+};
+
+const deliverBarcode = (barcodeValue) => {
+  const validation = validateBarcode(barcodeValue);
+
+  if (!validation.valid) {
+    return { valid: false, error: 'Invalid barcode' };
   }
 
-  deliverBarcode(barcodeValue) {
-    const validation = this.validateBarcode(barcodeValue);
+  const barcodes = getAvailableBarcodes();
+  const index = barcodes.findIndex((b) => b.value === barcodeValue);
 
-    if (!validation.valid) {
-      return { valid: false, error: 'Invalid barcode' };
-    }
+  if (index !== -1) {
+    barcodes[index].isDelivered = true;
 
-    const index = this.availableBarcodes.findIndex((b) => b.value === barcodeValue);
-
-    if (index !== -1) {
-      const deliveredBarcode = this.availableBarcodes.splice(index, 1)[0];
-      return { isDelivered: true, barcode: deliveredBarcode };
-    }
-
-    return { isDelivered: false, error: 'Barcode not found' };
+    fs.writeFileSync(barcodesFilePath, JSON.stringify(barcodes, null, 2), 'utf-8');
+    return {barcode: barcodes[index] };
   }
-}
 
-module.exports = new BarcodeService();
+  return { isDelivered: false, error: 'Barcode not found' };
+};
+
+module.exports = {
+  getAvailableBarcodes,
+  validateBarcode,
+  deliverBarcode,
+  addBarcode
+};

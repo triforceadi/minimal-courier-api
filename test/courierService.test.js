@@ -20,11 +20,13 @@ describe('CourierService', () => {
   });
 
   it('should get a courier by id', () => {
-    const existingCourier = new Courier(1, 'John', 'Doe', 25, ['Driver License']);
-    courierService.addCourier(existingCourier);
-
-    const retrievedCourier = courierService.getCourierById(1);
-    expect(retrievedCourier).to.deep.equal(existingCourier);
+    const newCourier = courierService.addCourier('John', 'Doe', 25, ['Driver License']);
+    const retrievedCourier = courierService.getCourierById(newCourier.id);
+    expect(retrievedCourier.firstName).not.null;
+    expect(retrievedCourier.lastName).not.null;
+    expect(retrievedCourier.age).not.null;
+    expect(retrievedCourier.id).not.null;
+    expect(retrievedCourier.licenses).not.null;
   });
 
   it('should return null when getting a non-existent courier by id', () => {

@@ -16,6 +16,17 @@ const validateBarcode = (req, res) => {
   }
 };
 
+const addBarcode = (req, res) => {
+  const { barcodeValue } = req.body;
+
+  if (!barcodeValue) {
+    res.status(400).json({ error: 'Barcode value is required' });
+  } else {
+    const newBarcode = barcodeService.addBarcode(barcodeValue);
+    res.status(201).json(newBarcode);
+  }
+};
+
 const deliverBarcode = (req, res) => {
   const { barcode } = req.body;
 
@@ -36,4 +47,5 @@ module.exports = {
   getAvailableBarcodes,
   validateBarcode,
   deliverBarcode,
+  addBarcode
 };

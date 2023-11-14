@@ -1,0 +1,17 @@
+[
+  {
+    "value": "789012",
+    "isValid": true,
+    "isDelivered": false
+  },
+  {
+    "value": "123456",
+    "isValid": true,
+    "isDelivered": true
+  },
+  {
+    "value": "662343",
+    "isValid": true,
+    "isDelivered": false
+  }
+]
