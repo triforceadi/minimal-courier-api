@@ -8,23 +8,6 @@
 
 /**
  * @swagger
- * /barcodes:
- *   get:
- *     summary: Get available barcodes
- *     tags: [Barcodes]
- *     responses:
- *       '200':
- *         description: Successful response
- *         content:
- *           application/json:
- *             example:
- *               - value: '123456'
- *                 isValid: true
- *               - value: '789012'
- *                 isValid: true
- */
-/**
- * @swagger
  * /barcodes/deliver:
  *   post:
  *     summary: Deliver a barcode
@@ -40,29 +23,53 @@
  *                 type: string
  *     responses:
  *       '200':
- *         description: Successful response
+ *         description: Barcode delivered successfully
  *         content:
  *           application/json:
- *             example:
- *               value: '123456'
- *               isValid: true
+ *             example: { "isDelivered": true, "barcode": "123456" }
  *       '400':
- *         description: Bad request
+ *         description: Incomplete request or missing barcode
  *         content:
  *           application/json:
- *             example:
- *               error: Barcode is required
+ *             example: { "code": 400, "message": "Barcode is required" }
  *       '404':
  *         description: Barcode not found
  *         content:
  *           application/json:
- *             example:
- *               error: Barcode not found
+ *             example: { "code": 404, "message": "Barcode could not be found" }
+ */
+
+/**
+ * @swagger
+ * /barcodes/add:
+ *   post:
+ *     summary: Add a new barcode
+ *     tags: [Barcodes]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               barcode:
+ *                 type: string
+ *     responses:
+ *       '201':
+ *         description: Barcode added successfully
+ *         content:
+ *           application/json:
+ *             example: "123456"
+ *       '400':
+ *         description: Incomplete request or missing barcode value
+ *         content:
+ *           application/json:
+ *             example: { "code": 400, "message": "Barcode value is required" }
  */
 /**
  * @swagger
  * /barcodes/validate:
- *   post:
+ *   put:
  *     summary: Validate a barcode
  *     tags: [Barcodes]
  *     requestBody:
@@ -76,46 +83,43 @@
  *                 type: string
  *     responses:
  *       '200':
- *         description: Successful response
+ *         description: Barcode validated successfully
  *         content:
  *           application/json:
- *             example:
- *               valid: true
+ *             example: Barcode has been validated
  *       '400':
- *         description: Bad request
+ *         description: Incomplete request or missing barcode
  *         content:
  *           application/json:
- *             example:
- *               error: Barcode is required
- *       '404':
- *         description: Invalid barcode
- *         content:
- *           application/json:
- *             example:
- *               valid: false
- *               error: Invalid barcode
+ *             example: { "code": 400, "message": "Barcode is required" }
  */
 /**
  * @swagger
- * /barcodes/addBarcode:
- *   post:
- *     summary: Add a new barcode
+ * components:
+ *   schemas:
+ *     ErrorResponseModel:
+ *       type: object
+ *       properties:
+ *         code:
+ *           type: integer
+ *           description: HTTP status code
+ *         message:
+ *           type: string
+ *           description: Error message
+ */
+
+/**
+ * @swagger
+ * /barcodes:
+ *   get:
+ *     summary: Get available barcodes
  *     tags: [Barcodes]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               barcodeValue:
- *                 type: string
- *                 description: The value of the new barcode
  *     responses:
- *       201:
- *         description: Barcode added successfully
- *       400:
- *         description: Barcode value is required
+ *       '200':
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             example: ["123456", "789012"]
  */
 
  const express = require('express');
@@ -124,7 +128,7 @@
  
  router.get('/', barcodeController.getAvailableBarcodes);
  router.post('/validate', barcodeController.validateBarcode);
- router.post('/deliver', barcodeController.deliverBarcode);
- router.post('/addBarcode', barcodeController.addBarcode);
+ router.put('/deliver', barcodeController.deliverBarcode);
+ router.post('/new', barcodeController.addBarcode);
  
  module.exports = router;

@@ -14,9 +14,9 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'User Management API',
+      title: 'Courier and Barcode API',
       version: '1.0.0',
-      description: 'A simple API for user management',
+      description: 'A minimal API for barcodes and couriers',
     },
   },
   apis: ['./src/routes/*.js'],

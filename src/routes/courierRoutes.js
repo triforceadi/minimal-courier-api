@@ -8,6 +8,21 @@
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     ErrorResponseModel:
+ *       type: object
+ *       properties:
+ *         code:
+ *           type: integer
+ *           description: HTTP status code
+ *         message:
+ *           type: string
+ *           description: Error message
+ */
+
+/**
+ * @swagger
  * /couriers:
  *   get:
  *     summary: Get all couriers
@@ -17,53 +32,33 @@
  *         description: Successful response
  *         content:
  *           application/json:
- *             example:
- *               - id: 1
- *                 firstName: John
- *                 lastName: Doe
- *                 age: 25
- *                 licenses:
- *                   - Driver License
- *               - id: 2
- *                 firstName: Jane
- *                 lastName: Smith
- *                 age: 30
- *                 licenses:
- *                   - Driver License
- *                   - Courier Certification
+ *             example: [{ "id": 1, "firstName": "John", "lastName": "Doe", "age": 25, "licenses": ["Driver License"] }]
  */
-
 /**
  * @swagger
  * /couriers/{id}:
  *   get:
- *     summary: Get courier by ID
+ *     summary: Get a courier by ID
  *     tags: [Couriers]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Courier ID
+ *         description: ID of the courier
+ *         schema:
+ *           type: integer
  *     responses:
  *       '200':
  *         description: Successful response
  *         content:
  *           application/json:
- *             example:
- *               id: 1
- *               firstName: John
- *               lastName: Doe
- *               age: 25
- *               licenses:
- *                 - Driver License
+ *             example: { "id": 1, "firstName": "John", "lastName": "Doe", "age": 25, "licenses": ["Driver License"] }
  *       '404':
  *         description: Courier not found
  *         content:
  *           application/json:
- *             example:
- *               error: Courier not found
+ *             example: { "code": 404, "message": "Courier could not be found" }
  */
-
 /**
  * @swagger
  * /couriers:
@@ -89,34 +84,29 @@
  *                   type: string
  *     responses:
  *       '201':
- *         description: Courier created successfully
+ *         description: Courier added successfully
  *         content:
  *           application/json:
- *             example:
- *               id: 3
- *               firstName: New
- *               lastName: Courier
- *               age: 28
- *               licenses:
- *                 - Courier Certification
+ *             example: { "id": 1, "firstName": "John", "lastName": "Doe", "age": 25, "licenses": ["Driver License"] }
  *       '400':
- *         description: Bad request
+ *         description: Incomplete request or missing courier information
  *         content:
  *           application/json:
- *             example:
- *               error: Incomplete courier information
+ *             example: { "code": 400, "message": "Incomplete courier information" }
  */
 /**
  * @swagger
  * /couriers/{id}:
  *   put:
- *     summary: Update courier information by ID
+ *     summary: Update a courier by ID
  *     tags: [Couriers]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Courier ID
+ *         description: ID of the courier
+ *         schema:
+ *           type: integer
  *     requestBody:
  *       required: true
  *       content:
@@ -136,22 +126,20 @@
  *                   type: string
  *     responses:
  *       '200':
- *         description: Successful response
+ *         description: Courier updated successfully
  *         content:
  *           application/json:
- *             example:
- *               id: 1
- *               firstName: John
- *               lastName: Doe
- *               age: 26
- *               licenses:
- *                 - Driver License
+ *             example: { "id": 1, "firstName": "Updated", "lastName": "Courier", "age": 30, "licenses": ["Updated License"] }
+ *       '400':
+ *         description: Incomplete request or missing courier information
+ *         content:
+ *           application/json:
+ *             example: { "code": 400, "message": 'Incomplete courier information' }
  *       '404':
  *         description: Courier not found
  *         content:
  *           application/json:
- *             example:
- *               error: Courier not found
+ *             example: { "code": 404, "message": "Courier could not be found using provided Id" }
  */
 
 
