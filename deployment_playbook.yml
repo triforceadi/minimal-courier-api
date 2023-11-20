@@ -10,6 +10,8 @@
       docker_login:
         username: "{{username}}"
         password: "{{password}}"
+
+    - name: Pull latest image
       docker_image:
         source: pull
         name: triforceadi/minimal-courier-api:latest
