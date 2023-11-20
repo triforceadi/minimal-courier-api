@@ -8,8 +8,8 @@
 
     - name: log into docker hub registry
       docker_login:
-        username: "${username}"
-        password: "${password}"
+        username: "{{username}}"
+        password: "{{password}}"
       docker_image:
         source: pull
         name: triforceadi/minimal-courier-api:latest
