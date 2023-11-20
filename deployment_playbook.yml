@@ -1,15 +1,17 @@
 - name: Run Docker Container
-  hosts: localhost
-  become: true
+  hosts: 127.0.0.1
+  connection: local
+  become: false
+  vars:
+    ansible_python_interpreter: /bin/python3
   tasks:
 
     - name: log into docker hub registry
       docker_login:
-        username: ""
-        password: ""
-
-    - name: Pull Docker Image
+        username: "${username}"
+        password: "${password}"
       docker_image:
+        source: pull
         name: triforceadi/minimal-courier-api:latest
 
     - name: Run Docker Container
