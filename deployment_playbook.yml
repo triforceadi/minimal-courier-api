@@ -1,0 +1,21 @@
+- name: Run Docker Container
+  hosts: localhost
+  become: true
+  tasks:
+
+    - name: log into docker hub registry
+      docker_login:
+        username: ""
+        password: ""
+
+    - name: Pull Docker Image
+      docker_image:
+        name: triforceadi/minimal-courier-api:latest
+
+    - name: Run Docker Container
+      docker_container:
+        name: local_container
+        image: triforceadi/minimal-courier-api:latest
+        state: started
+        ports:
+          - "3000:3000"
