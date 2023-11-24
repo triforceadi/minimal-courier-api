@@ -39,8 +39,8 @@ pipeline {
         stage('Build and Run Unit Tests') {
             steps {
                 script {
-                    bat 'npm install'
-                    bat 'npm test'
+                    sh 'npm install'
+                    sh 'npm test'
                 }
             }
         }
@@ -49,9 +49,9 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerLogin', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        bat 'docker build -t triforceadi/minimal-courier-api .'
-                        bat "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-                        bat 'docker push triforceadi/minimal-courier-api'
+                        sh 'docker build -t triforceadi/minimal-courier-api .'
+                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                        sh 'docker push triforceadi/minimal-courier-api'
 
                     }   
                 }
@@ -100,4 +100,3 @@ pipeline {
             }
         }
     }
-
