@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+    environment {
+        ANSIBLE_HOME = tool 'ansible'
+        PATH = "${ANSIBLE_HOME}/bin:${PATH}"
+    }
+    stages {
+        
+        stage('Checkout') {
+            steps {
+                script {
+                    checkout([$class: 'GitSCM', branches: [[name: 'main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/triforceadi/minimal-courier-api.git']]])
+                }
+            }
+        }
+        
+        stage('Run Ansible Playbook') {
+            steps {
+             withCredentials([usernamePassword(credentialsId: 'dockerLogin', passwordVariable: 'pass', usernameVariable: 'usr')]) {
+                 sh '/bin/ansible-playbook deployment_playbook.yml --extra-vars "username=${usr} password=${pass}"'
+             }
+            }
+        }
+    }
+}
