@@ -11,20 +11,32 @@ def getLatestRunId() {
     return runs.workflow_runs[0].id
     }
 }
-
 def waitForWorkflowCompletion(runId) {
-        withCredentials([string(credentialsId: 'bearerTokenGitHub', variable: 'BEARER_TOKEN')]) {
-            def response = httpRequest(
+    withCredentials([string(credentialsId: 'bearerTokenGitHub', variable: 'BEARER_TOKEN')]) {
+    def response = httpRequest(
                     httpMode: 'GET',
                     url: "https://api.github.com/repos/triforceadi/minimal-courier-e2e-tests/actions/runs/${runId}",
                     customHeaders: [[name: 'Authorization', value: "Bearer ${BEARER_TOKEN}"]],
-                    acceptType: 'APPLICATION_JSON'
-            )
+                    acceptType: 'APPLICATION_JSON')
             def resposeBody = new JsonSlurper().parseText(response.content)
             return resposeBody.conclusion
         }
 }
 
+def triggerTests() {
+    withCredentials([string(credentialsId: 'bearerTokenGitHub', variable: 'BEARER_TOKEN')]) {
+    def response = httpRequest(
+        httpMode: 'POST',
+        url: 'https://api.github.com/repos/triforceadi/minimal-courier-e2e-tests/actions/workflows/76202987/dispatches',
+        customHeaders: [[name: 'Authorization', value: "Bearer ${BEARER_TOKEN}"]],
+        acceptType: 'APPLICATION_JSON',
+        contentType: 'APPLICATION_JSON',
+        requestBody: '{"ref":"main"}')
+        echo "Response: ${response}"
+
+        return response;
+    }
+}
 pipeline {
     agent any
     stages {
@@ -35,7 +47,6 @@ pipeline {
                 }
             }
         }
-
         stage('Build and Run Unit Tests') {
             steps {
                 script {
@@ -44,7 +55,6 @@ pipeline {
                 }
             }
         }
-        
         stage('Build and Push Docker Container') {
             steps {
                 script {
@@ -61,17 +71,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        withCredentials([string(credentialsId: 'bearerTokenGitHub', variable: 'BEARER_TOKEN')]) {
-                         def response = httpRequest(
-                            httpMode: 'POST',
-                            url: 'https://api.github.com/repos/triforceadi/minimal-courier-e2e-tests/actions/workflows/76202987/dispatches',
-                            customHeaders: [[name: 'Authorization', value: "Bearer ${BEARER_TOKEN}"]],
-                            acceptType: 'APPLICATION_JSON',
-                            contentType: 'APPLICATION_JSON',
-                            requestBody: '{"ref":"main"}'
-                            )
-                            echo "Response: ${response}"
-                        }
+                        triggerTests();
                     } catch (Exception e) {
                         echo "Failed to invoke GitHub Actions Workflow: ${e.getMessage()}"
                         currentBuild.result = 'FAILURE'
@@ -86,12 +86,10 @@ pipeline {
                     while (conclusion == 'null') {
                             sleep(time: 40, unit: 'SECONDS')
                             conclusion = waitForWorkflowCompletion(getLatestRunId())
-                            if(conclusion == 'success') 
-                            {
+                            if(conclusion == 'success') {
                             currentBuild.result = 'SUCCESS'
                             }
-                            else if(conclusion == 'failure')
-                            {
+                            else if(conclusion == 'failure') {
                             currentBuild.result = 'FAILURE'
                             }
                         }
